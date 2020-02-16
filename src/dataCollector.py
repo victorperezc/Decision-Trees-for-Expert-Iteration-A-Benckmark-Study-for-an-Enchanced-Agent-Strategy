@@ -1,5 +1,4 @@
 from src.uct import OXOState,OthelloState,NimState,UCT
-from src.definitions import SIMULATIONS_DIR
 import pandas as pd
 import csv
 from itertools import product
@@ -46,7 +45,7 @@ class DataCollector():
 
             if self.args.verbose: print("[INFO] Iteration {0}/{1} : Simulating {2} Games ... ({3}% Completed) ".format(iteration,self.args.iterations,self.args.ngames,round((i/games)*100,4)),end="\r", flush=True)
         
-        print("[INFO] {0}Iteration {1}/{2} : Completed simulation for {3} Games in {4} seconds.".format("\033[K",iteration,self.args.iterations,self.args.ngames,round(time.time()-start_time,2)))
+        print("[INFO] {0}Iteration {1}/{2} : Completed simulation for {3} Games in {4} seconds. Agent 1 wins {5} games. Agent 2 wins {6} games.".format("\033[K",iteration,self.args.iterations,self.args.ngames,round(time.time()-start_time,2),self.wins["1"],self.wins["2"]))
         return res,self.wins
 
     def play(self,n,classifier,iteration):
@@ -65,7 +64,9 @@ class DataCollector():
                     m = UCT(rootstate = state, itermax = 100, verbose = False)
   
             if classifier:
-                if state.playerJustMoved == 2:
+                if state.playerJustMoved == 2 and self.args.agent2 == "mcts":
+                    m = UCT(rootstate = state, itermax = 100, verbose = False) # play with values for itermax and verbose = True
+                elif state.playerJustMoved == 1 and self.args.agent1 == "mcts":
                     m = UCT(rootstate = state, itermax = 100, verbose = False) # play with values for itermax and verbose = True
                 else:
                     if random.randrange(10) == 0:

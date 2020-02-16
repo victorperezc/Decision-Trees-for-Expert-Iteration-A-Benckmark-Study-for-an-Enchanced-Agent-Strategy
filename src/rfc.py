@@ -9,12 +9,12 @@ import itertools
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import GridSearchCV
 import pickle
-from definitions import SIMULATIONS_DIR,CHARTS_DIR,REGRESSORS_DIR
+from src.definitions import CHARTS_DIR,REGRESSORS_DIR,RESULTS_DIR
 
 class RandomForest():
 
-    def __init__(self,filename,features,predictor,classes,name,cm=False,vi=False,dump_regressor=False):
-        self.filename = filename
+    def __init__(self,data,features,predictor,classes,name,cm=False,vi=False,dump_regressor=False):
+        self.data = data
         self.features = features
         self.predictor = predictor
         self.classes = classes
@@ -24,34 +24,9 @@ class RandomForest():
         self.dump_regressor = dump_regressor
         self.rf = RandomForestClassifier(n_estimators = 50, bootstrap = True, max_features = 'sqrt', random_state = 34,n_jobs=-1)
 
-    def ramdomHyperparametersSearch(self):
-        n_estimators = [int(x) for x in np.linspace(start = 10, stop = 200, num = 10)]
-        max_features = ['auto', 'sqrt']
-        max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
-        max_depth.append(None)
-        min_samples_split = [2, 5, 10]
-        min_samples_leaf = [1, 2, 4]
-        bootstrap = [True, False]
-        random_grid = {'n_estimators': n_estimators,
-                    'max_features': max_features,
-                    'max_depth': max_depth,
-                    'min_samples_split': min_samples_split,
-                    'min_samples_leaf': min_samples_leaf,
-                    'bootstrap': bootstrap}
-
-        rf = RandomForestClassifier()
-        rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, n_iter=10, cv = 10, verbose=2, n_jobs = -1)
-        data = self.loadData(self.features,self.predictor)
-        train_features, test_features, train_labels, test_labels = self.split(data)
-        rf_random.fit(train_features, train_labels)
-        print(rf_random.best_params_)
-        self.test(rf_random,test_features,test_labels)
-
-
     # Train the Random Forest Classifier
     def train(self):
-        data = self.loadData(self.features,self.predictor)
-        train_features, test_features, train_labels, test_labels = self.split(data)
+        train_features, test_features, train_labels, test_labels = self.split(self.data)
         self.rf.fit(train_features, train_labels)
 
         train_predictions, train_probs = self.test(self.rf,train_features,train_labels)
@@ -68,12 +43,19 @@ class RandomForest():
             with open(self.dump_regressor, 'wb') as fid:
                 pickle.dump(self.rf, fid)  
 
+        return self.accuracy(self.rf,test_features,test_labels)
+
+        
+
 
     def test(self,model,features,labels):
         predictions = model.predict(features)
         probs = model.predict_proba(features)[:, 1]
-        print("Accuracy : ", self.accuracy(model,features,labels))
+        #print("Accuracy : ", self.accuracy(model,features,labels))
         return predictions,probs
+
+    def predict(self,d):
+        return self.rf.predict(d)[0]
 
     def accuracy(self,model,predictions,labels):
         return model.score(predictions, labels)
@@ -95,10 +77,6 @@ class RandomForest():
 
 
         return importances
-
-    def loadData(self,features,predictor):
-        data = pd.read_csv(self.filename,usecols=features + predictor)
-        return data
 
     def split(self,data):
         labels = np.array(data[self.predictor])
@@ -153,36 +131,3 @@ class RandomForest():
         plt.savefig(self.cm)
 
 
-
-if __name__ == "__main__":
-
-    rf = RandomForest(filename=SIMULATIONS_DIR + 'oxo_game.csv',
-        features=["Step","Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8","Agent"],
-        predictor=["Move"],
-        classes=["Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8"],
-        name="OXO Game",
-        cm=CHARTS_DIR + "oxo_game_confusion_matrix.png",
-        vi=CHARTS_DIR + "oxo_game_variable_importances.png",
-        dump_regressor=REGRESSORS_DIR + "oxo_game_dumped_rfc.pkl"
-    ).train()
-    """
-    rf = RandomForest(filename=SIMULATIONS_DIR + 'othello_game.csv',
-        features=["Step","Cell_0_0","Cell_0_1","Cell_0_2","Cell_0_3","Cell_1_0","Cell_1_1","Cell_1_2","Cell_1_3","Cell_2_0","Cell_2_1","Cell_2_2","Cell_2_3","Cell_3_0","Cell_3_1","Cell_3_2","Cell_3_3","Agent"],
-        predictor=["Move"],
-        classes=["Cell_0_0","Cell_0_1","Cell_0_2","Cell_0_3","Cell_1_0","Cell_1_3","Cell_2_0","Cell_2_3","Cell_3_0","Cell_3_1","Cell_3_2","Cell_3_3"],
-        name="OXO Game",
-        cm=CHARTS_DIR + "othello_game_confusion_matrix.png",
-        vi=CHARTS_DIR + "othello_game_variable_importances.png",
-        dump_regressor=REGRESSORS_DIR + "othello_game_dumped_rfc.pkl"
-    ).train()
-
-    rf = RandomForest(filename=SIMULATIONS_DIR + 'nim_game.csv',
-        features=["Step","Chips","Agent"],
-        predictor=["Move"],
-        classes=["Chips_1","Chips_2","Chips_3"],
-        name="OXO Game",
-        cm=CHARTS_DIR + "nim_game_confusion_matrix.png",
-        vi=CHARTS_DIR + "nim_game_variable_importances.png",
-        dump_regressor=REGRESSORS_DIR + "nim_game_dumped_rfc.pkl"
-    ).train()
-    """

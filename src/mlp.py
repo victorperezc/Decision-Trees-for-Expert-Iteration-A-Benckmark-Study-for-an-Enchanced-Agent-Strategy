@@ -8,7 +8,7 @@ import pickle
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
-from definitions import SIMULATIONS_DIR,CHARTS_DIR,REGRESSORS_DIR
+from definitions import CHARTS_DIR,REGRESSORS_DIR,RESULTS_DIR
 
 class MLPClassifier():
 
@@ -63,7 +63,7 @@ class MLPClassifier():
         return train_features, test_features, train_labels, test_labels
 
 if __name__ == "__main__":
-    rf = MLPClassifier(filename=SIMULATIONS_DIR + 'oxo_game.csv',
+    rf = MLPClassifier(filename=RESULTS_DIR + 'oxo_game.csv',
         features=["Step","Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8","Agent"],
         predictor=["Move"],
         classes=["Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8"],

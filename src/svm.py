@@ -6,7 +6,7 @@ from sklearn.svm import SVC
 import itertools
 from sklearn.metrics import classification_report, confusion_matrix
 import pickle
-from definitions import SIMULATIONS_DIR
+from definitions import RESULTS_DIR
 
 class SVM():
 
@@ -50,9 +50,9 @@ class SVM():
 
 
 if __name__ == "__main__":
-    svm = SVM(SIMULATIONS_DIR + 'oxo_game.csv',["Step","Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8","Agent"],["Move"])
-    #svm = SVM(SIMULATIONS_DIR + 'othello_game.csv',["Step","Cell_0_0","Cell_0_1","Cell_0_2","Cell_0_3","Cell_1_0","Cell_1_1","Cell_1_2","Cell_1_3","Cell_2_0","Cell_2_1","Cell_2_2","Cell_2_3","Cell_3_0","Cell_3_1","Cell_3_2","Cell_3_3","Agent"],["Move"])
-    #svm = SVM(SIMULATIONS_DIR + 'nim_game.csv',["Chips","Agent"],["Move"])
+    svm = SVM(RESULTS_DIR + 'oxo_game.csv',["Step","Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8","Agent"],["Move"])
+    #svm = SVM(RESULTS_DIR + 'othello_game.csv',["Step","Cell_0_0","Cell_0_1","Cell_0_2","Cell_0_3","Cell_1_0","Cell_1_1","Cell_1_2","Cell_1_3","Cell_2_0","Cell_2_1","Cell_2_2","Cell_2_3","Cell_3_0","Cell_3_1","Cell_3_2","Cell_3_3","Agent"],["Move"])
+    #svm = SVM(RESULTS_DIR + 'nim_game.csv',["Chips","Agent"],["Move"])
     svm.train()
 
     
