@@ -22,25 +22,19 @@ The system includes a wide range of command line arguments to customize the exec
 
     -h, --help            show the help message
 
-    -a1 {mcts,rfc,svm,mlp}, --agent1 {mcts,rfc,svm,mlp}
-                        Agent 1 Training Method
+    -a1 {mcts,rfc,svm,mlp}, --agent1 {mcts,rfc,svm,mlp} Agent 1 Training Method
 
-    -a2 {mcts,rfc,svm,mlp}, --agent2 {mcts,rfc,svm,mlp}
-                        Agent 2 Training Method
+    -a2 {mcts,rfc,svm,mlp}, --agent2 {mcts,rfc,svm,mlp} Agent 2 Training Method
 
-    -o OUTPUT, --output OUTPUT
-                        Output Filename
+    -o OUTPUT, --output OUTPUT Output Filename
 
-    -i ITERATIONS, --iterations ITERATIONS
-                        Number of Iterations
+    -i ITERATIONS, --iterations ITERATIONS Number of Iterations
 
     -c, --continous       If the training should be carried out using continous data
 
-    -n NGAMES, --ngames NGAMES
-                        Number of games to play per iteration
+    -n NGAMES, --ngames NGAMES Number of games to play per iteration
 
-    -g {oxo,othello,nim}, --game {oxo,othello,nim}
-                        Game to play
+    -g {oxo,othello,nim}, --game {oxo,othello,nim} Game to play
 
     -v, --verbose         Program Verbosity
 
