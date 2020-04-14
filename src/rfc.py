@@ -13,8 +13,8 @@ from src.definitions import CHARTS_DIR,REGRESSORS_DIR,RESULTS_DIR
 
 class RandomForest():
 
-    def __init__(self,data,features,predictor,classes,name,cm=False,vi=False,dump_regressor=False):
-        self.data = data
+    def __init__(self,dataset,features,predictor,classes,name,cm=False,vi=False,dump_regressor=False):
+        self.data = dataset
         self.features = features
         self.predictor = predictor
         self.classes = classes
@@ -44,8 +44,6 @@ class RandomForest():
                 pickle.dump(self.rf, fid)  
 
         return self.accuracy(self.rf,test_features,test_labels)
-
-        
 
 
     def test(self,model,features,labels):

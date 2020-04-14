@@ -63,7 +63,7 @@ class NimState:
         Any initial state of the form 4n is a win for player 2.
     """
     def __init__(self, ch):
-        self.playerJustMoved = 2 # At the root pretend the player just moved is p2 - p1 has the first move
+        self.playerJustMoved = random.randint(1,2) # At the root pretend the player just moved is p2 - p1 has the first move
         self.chips = ch
         
     def Clone(self):
@@ -165,7 +165,7 @@ class OthelloState:
         the standard game allows for a pass move). 
     """
     def __init__(self,sz = 8):
-        self.playerJustMoved = 2 # At the root pretend the player just moved is p2 - p1 has the first move
+        self.playerJustMoved = random.randint(1,2) # At the root pretend the player just moved is p2 - p1 has the first move
         self.board = [] # 0 = empty, 1 = player 1, 2 = player 2
         self.size = sz
         assert sz == int(sz) and sz % 2 == 0 # size must be integral and even

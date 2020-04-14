@@ -9,8 +9,8 @@ class DataCollector():
     def __init__(self,args):
         self.args = args
         self.game_to_play = args.game
-        self.othello_size = 4
-        self.nim_chips = 15
+        self.othello_size = args.othelloBoardSize
+        self.nim_chips = args.nimChips
         self.games = {
             "oxo" : {
                 "object" : OXOState,
@@ -72,7 +72,19 @@ class DataCollector():
                     if random.randrange(10) == 0:
                         m = random.choice(state.GetMoves())
                     else:
-                        m = classifier.predict([[step] + state.board + [3 - state.playerJustMoved]])
+                        if self.game_to_play in ["oxo","othello"]:
+                            board = []
+                            if self.game_to_play == "oxo":
+                                board = state.board
+                            elif self.game_to_play == "othello":
+                                for l in state.board:
+                                    for i in l:
+                                        board.append(i)
+                            m = classifier.predict([[step] + board + [3 - state.playerJustMoved]])
+                            m = (str(m)[0],str(m)[1]) if len(str(m)) == 2 else (m,0)
+                        elif self.game_to_play == "nim":
+                            m = classifier.predict([[step] + [state.chips] + [3 - state.playerJustMoved]])
+                        
                         if m not in state.GetMoves():
                             m = random.choice(state.GetMoves())
 

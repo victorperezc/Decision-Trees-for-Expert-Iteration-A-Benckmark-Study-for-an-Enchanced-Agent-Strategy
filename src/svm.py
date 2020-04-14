@@ -6,40 +6,37 @@ from sklearn.svm import SVC
 import itertools
 from sklearn.metrics import classification_report, confusion_matrix
 import pickle
-from definitions import RESULTS_DIR
+from src.definitions import RESULTS_DIR
 
 class SVM():
 
-    def __init__(self,filename,features,predictor):
-        self.filename = filename
+    def __init__(self,dataset,features,predictor,classes,name,cm=False,vi=False,dump_regressor=False):
+        self.data = dataset
         self.features = features
         self.predictor = predictor
+        self.classes = classes
+        self.name = name
+        self.cm = cm
+        self.vi = vi
+        self.dump_regressor = dump_regressor
         self.classifier = SVC(kernel='rbf')
 
     # Train the Random Forest Classifier
     def train(self):
-        data = self.loadData(self.features,self.predictor)
-        train_features, test_features, train_labels, test_labels = self.split(data)
+        train_features, test_features, train_labels, test_labels = self.split(self.data)
         self.classifier.fit(train_features, train_labels)
-        y_pred = self.classifier.predict(test_features)
-        print(confusion_matrix(test_labels,y_pred))
-        print(classification_report(test_labels,y_pred))
+        return self.accuracy(test_features,test_labels)
 
-        with open('my_dumped_classifier.pkl', 'wb') as fid:
-            pickle.dump(self.classifier, fid)  
-
-    def test(self,model,features,labels):
-        predictions = model.predict(features)
-        probs = model.predict_proba(features)[:, 1]
-        print("Accuracy : ", self.accuracy(model,features,labels))
+    def test(self,features,labels):
+        predictions = self.classifier.predict(features)
+        probs = self.classifier.predict_proba(features)[:, 1]
         return predictions,probs
         
-    def accuracy(self,model,predictions,labels):
-        return model.score(predictions, labels)
+    def accuracy(self,predictions,labels):
+        return self.classifier.score(predictions, labels)
 
-    def loadData(self,features,predictor):
-        data = pd.read_csv(self.filename,usecols=features + predictor)
-        return data
+    def predict(self,d):
+        return self.classifier.predict(d)[0]
 
     def split(self,data):
         labels = np.array(data[self.predictor])

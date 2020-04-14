@@ -39,7 +39,7 @@ The system includes a wide range of command line arguments to customize the exec
     -v, --verbose         Program Verbosity
 
 ## Default Execution
-When executing withou argument these are the default arguments used
+When executing without arguments these are the default arguments used
 
     python3 main.py -a1 rfc -a2 rfc -g oxo -i 10 -n 10 -o date_now.csv
 
@@ -52,4 +52,12 @@ Execute the code with both agents playing with MCTS
 
 Execute with Agent 1 playing with RFC and agent 2 with MCTS
 
-    python3 main.py -a1 rfc -a2 mcts -g oxo -i 100 -n 20 -o outputfile.csv --continous --verbose
+    python3 main.py -a1 rfc -a2 mcts -g oxo -i 100 -n 20 -o outputfile.csv --verbose
+
+## Continous training
+
+The agents can be trained using continous data, that means that the agent n is trained using all the outcomes from the previous agents (0,n-1). Therefore, the agents not only are trained on the past agent data but on all the generations. To achieve so you can add the flag --continous to your execution. By default continous learning is disabled and therefore an agent n will be trained with only the last agent output.
+
+    python3 main.py -a1 rfc -a2 mcts -g oxo -i 100 -n 20 -o outpufile.csv --continous --verbose
+
+    

@@ -2,10 +2,13 @@ import sys, getopt
 from src.uct import OXOState,OthelloState,NimState,UCT
 from src.dataCollector import DataCollector
 from src.rfc import RandomForest
+from src.svm import SVM
+from src.mlp import MLPClassifier
 import argparse
 import pandas as pd
 import datetime
 from src.definitions import ROOT_DIR,RESULTS_DIR
+from itertools import product
 
 class ParseArguments():
 
@@ -20,6 +23,8 @@ class ParseArguments():
         parser.add_argument("-n", "--ngames", help="Number of games to play per iteration",default=10,type=int)
         parser.add_argument("-g","--game", help="Game to play",choices=["oxo","othello","nim"],default="oxo")
         parser.add_argument("-v","--verbose",action="store_true", help="Program Verbosity",default=False)
+        parser.add_argument("-nc","--nimChips", help="Nim Chips",default=15,type=int)
+        parser.add_argument("-ob","--othelloBoardSize", help="Othello Board Size",default=4,type=int)
 
         return parser.parse_args()
 
@@ -44,6 +49,7 @@ class Main():
         for i in range(self.args.iterations):
             if classifier:
                 df,wins = self.collector.collect(iteration=i,games=self.args.ngames,classifier=classifier)
+                df.to_csv("aaaa.csv")
             else:
                 df,wins = self.collector.collect(iteration=i,games=self.args.ngames)
 
@@ -53,14 +59,39 @@ class Main():
                 else:
                     continous_df = continous_df.append(df)
 
-            if self.args.agent1 != "mcts" or self.args.agent2 != "mcts":
+            if self.args.agent1 != "mcts" or self.args.agent2 != "mcts": # If at leat one agent is not mcts 
+                if self.args.game == "oxo":
+                    tt = {
+                        "dataset": continous_df if self.args.continous else df,
+                        "features": ["Step","Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8","Agent"],
+                        "predictor": ["Move"],
+                        "classes": ["Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8"],
+                        "name": "OXO Game",
+                    }
+                elif self.args.game == "othello":
+                    tt = {
+                        "dataset":continous_df if self.args.continous else df,
+                        "features":  ["Step"] + ["Cell_"+str(x)+"_"+str(y) for x,y in product([ i%self.args.othelloBoardSize for i in range(self.args.othelloBoardSize)],[ i%self.args.othelloBoardSize for i in range(self.args.othelloBoardSize)])] + ["Agent"],
+                        "predictor": ["Move"],
+                        "classes": ["Cell_"+str(x)+"_"+str(y) for x,y in product([ i%self.args.othelloBoardSize for i in range(self.args.othelloBoardSize)],[ i%self.args.othelloBoardSize for i in range(self.args.othelloBoardSize)])],
+                        "name": "Othello Game"
+                    }
+                elif self.args.game == "nim":
+                    tt = {
+                        "dataset": continous_df if self.args.continous else df,
+                        "features": ["Step","Chips","Agent"],
+                        "predictor": ["Move"],
+                        "classes": ["Chips"],
+                        "name": "Nim Game"
+                    }
 
-                classifier = RandomForest(continous_df if self.args.continous else df,
-                    features=["Step","Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8","Agent"],
-                    predictor=["Move"],
-                    classes=["Cell_0","Cell_1", "Cell_2","Cell_3","Cell_4","Cell_5","Cell_6","Cell_7","Cell_8"],
-                    name="OXO Game"
-                )
+                if self.args.agent1 == "rfc" or self.args.agent2 == "rfc":
+                    classifier = RandomForest(**tt)
+                if self.args.agent1 == "svm" or self.args.agent2 == "svm":
+                    classifier = SVM(**tt)
+                if self.args.agent1 == "mlp" or self.args.agent2 == "mlp":
+                    classifier = MLPClassifier(**tt)
+
 
                 record.append(classifier)
 
@@ -87,13 +118,5 @@ class Main():
         df.to_csv(RESULTS_DIR + self.args.output, index=False)
 
 
-"""
-Arguments : 
-    * -h or --help : Displays help information
-    * -c or --classifier : [rfc,svm,mlp] | Stands for Random Forest Classifier, Support Vector Machine and Multi Layer Perceptron
-    * -i or --iterations : Retraining iterations
-    * -n or --ngames : # Games Per iteration 
-    * -g or --game : Game to play [oxo,othello,nim]
-"""
 if __name__ == "__main__":
     Main().train()
