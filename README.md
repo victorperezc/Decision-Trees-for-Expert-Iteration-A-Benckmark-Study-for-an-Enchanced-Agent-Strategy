@@ -16,11 +16,18 @@ Install the requirements as
 
     pip3 install -r requirements.txt
 
-## Execute 
+## Usage
 
 Run from the command line as
 
     python3 main.py 
+    
+The usage is the following
+
+    usage: main.py [-h] [-a1 {mcts,rfc,svm,mlp}] [-a2 {mcts,rfc,svm,mlp}]
+                   [-o OUTPUT] [-i ITERATIONS] [-c] [-n NGAMES]
+                   [-g {oxo,othello,nim}] [-v] [-nc NIMCHIPS]
+                   [-ob OTHELLOBOARDSIZE]
 
 The system includes a wide range of command line arguments to customize the execution.
 
