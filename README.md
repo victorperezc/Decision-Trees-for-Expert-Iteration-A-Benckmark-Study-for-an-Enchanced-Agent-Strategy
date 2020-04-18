@@ -6,7 +6,7 @@ Victor Perez Cester ( vp19885@essex.ac.uk )
 
 ## Set Up Dependencies
 
-Please note that this project has been developed under a MacOS distribution. I highly recommned you to execute it under a Unix distribution such as MacOS, or Ubuntu. 
+Please note that this project has been developed under a MacOS distribution. I highly recommned you to execute it under a MacOS or Unix distribution. It's not been tested under a windows environment.
 
 Create a virtual environment 
 
