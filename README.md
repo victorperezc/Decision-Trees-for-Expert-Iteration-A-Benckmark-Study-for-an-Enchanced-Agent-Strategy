@@ -1,8 +1,4 @@
-# CE888-Project
-
-## Student
-
-Victor Perez Cester ( vp19885@essex.ac.uk )
+# Decision Trees for Expert Iteration : A Benckmark Study for en Enchanced Agent Strategy
 
 ## Set Up Dependencies
 
