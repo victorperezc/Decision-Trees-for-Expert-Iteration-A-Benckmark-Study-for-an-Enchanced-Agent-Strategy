@@ -1,4 +1,4 @@
-# Decision Trees for Expert Iteration : A Benckmark Study for en Enchanced Agent Strategy
+# Decision Trees for Expert Iteration : A Benckmark Study for an Enchanced Agent Strategy
 
 ## Set Up Dependencies
 
